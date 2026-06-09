@@ -1,0 +1,56 @@
+backend:
+  name: git-gateway
+  branch: main
+
+media_folder: "uploads"
+public_folder: "/uploads"
+
+locale: "tr"
+
+collections:
+  - name: "settings"
+    label: "Site İçeriği"
+    files:
+      - label: "Ana Sayfa"
+        name: "homepage"
+        file: "content/site.json"
+        format: "json"
+        fields:
+          - { label: "Üst Küçük Yazı", name: "eyebrow", widget: "string" }
+          - { label: "Başlık", name: "title", widget: "string" }
+          - { label: "Alt Başlık", name: "subtitle", widget: "string" }
+          - { label: "Ana Fotoğraf", name: "mainImage", widget: "image" }
+
+          - { label: "Galeri Başlığı", name: "galleryTitle", widget: "string" }
+          - label: "Galeri Fotoğrafları"
+            name: "gallery"
+            widget: "list"
+            fields:
+              - { label: "Fotoğraf", name: "image", widget: "image" }
+              - { label: "Fotoğraf Notu", name: "caption", widget: "string", required: false }
+
+          - { label: "Mektup Başlığı", name: "letterTitle", widget: "string" }
+          - { label: "Alttaki Uzun Yazı / Mektup", name: "letter", widget: "text" }
+
+          - { label: "Zaman Çizelgesi Başlığı", name: "timelineTitle", widget: "string", required: false }
+          - label: "Zaman Çizelgesi"
+            name: "timeline"
+            widget: "list"
+            required: false
+            fields:
+              - { label: "Tarih / Başlık", name: "date", widget: "string" }
+              - { label: "Açıklama", name: "text", widget: "string" }
+
+          - { label: "Footer Yazısı", name: "footerText", widget: "string", required: false }
+
+          - label: "Tema Renkleri"
+            name: "theme"
+            widget: "object"
+            collapsed: true
+            fields:
+              - { label: "Arka Plan 1", name: "bg1", widget: "color" }
+              - { label: "Arka Plan 2", name: "bg2", widget: "color" }
+              - { label: "Ana Çerçeve Rengi", name: "accent", widget: "color" }
+              - { label: "Yazı Parlak Rengi", name: "accent2", widget: "color" }
+              - { label: "Ana Yazı Rengi", name: "text", widget: "color" }
+              - { label: "Alt Yazı Rengi", name: "muted", widget: "color" }

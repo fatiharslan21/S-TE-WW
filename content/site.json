@@ -1,0 +1,47 @@
+{
+  "eyebrow": "Our little universe",
+  "title": "Bizim Hikayemiz",
+  "subtitle": "Her fotoğraf, her cümle, her anı biraz daha “biz”.",
+  "mainImage": "/uploads/main.svg",
+  "galleryTitle": "Anılarımız",
+  "gallery": [
+    {
+      "image": "/uploads/photo-1.svg",
+      "caption": "İlk güzel anımız"
+    },
+    {
+      "image": "/uploads/photo-2.svg",
+      "caption": "En sevdiğim gülüş"
+    },
+    {
+      "image": "/uploads/photo-3.svg",
+      "caption": "Birlikte her yer güzel"
+    }
+  ],
+  "letterTitle": "Sana küçük bir mektup",
+  "letter": "Sen hayatıma girdiğinden beri bazı şeyler çok daha güzel.\n\nBazen bir fotoğrafa bakıyorum ve o anı tekrar yaşıyorum. Bazen söylediğin minicik bir cümle bütün günümü güzelleştiriyor.\n\nBu site de sana küçük bir sürpriz olsun istedim. İçinde bizim anılarımız, bizim gülüşlerimiz ve benim sana söylemek isteyip de bazen cümlelere sığdıramadıklarım var.\n\nİyi ki varsın. İyi ki biz varız.",
+  "timelineTitle": "Minik Zaman Çizelgemiz",
+  "timeline": [
+    {
+      "date": "İlk gün",
+      "text": "Her şeyin daha güzel başlamaya başladığı gün."
+    },
+    {
+      "date": "İlk fotoğraf",
+      "text": "O anı saklamak istedim çünkü çok güzeldi."
+    },
+    {
+      "date": "Bugün",
+      "text": "Hâlâ en sevdiğim yer, senin yanın."
+    }
+  ],
+  "footerText": "Made with love",
+  "theme": {
+    "bg1": "#13991b",
+    "bg2": "#0d7f15",
+    "accent": "#f5d45d",
+    "accent2": "#ffeaa2",
+    "text": "#fffdf1",
+    "muted": "#fff2bd"
+  }
+}
