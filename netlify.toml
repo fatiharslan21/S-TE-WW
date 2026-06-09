@@ -1,8 +1,13 @@
 [build]
   publish = "."
-  command = ""
+  functions = "netlify/functions"
 
 [[redirects]]
-  from = "/admin/*"
-  to = "/admin/index.html"
+  from = "/api/get-site"
+  to = "/.netlify/functions/getSite"
+  status = 200
+
+[[redirects]]
+  from = "/api/save-site"
+  to = "/.netlify/functions/saveSite"
   status = 200

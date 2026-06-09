@@ -1,107 +1,75 @@
-async function loadSiteData() {
-  const response = await fetch('/content/site.json?cache=' + Date.now());
-  if (!response.ok) throw new Error('site.json okunamadı');
-  return response.json();
-}
+const fallback = {
+  title: 'Bizim Hikayemiz',
+  subtitle: 'Seninle her an biraz daha güzel',
+  mainImage: '',
+  gallery: ['', '', '', ''],
+  letter: 'Buraya ona yazmak istediğin uzun yazıyı admin panelinden girebilirsin.',
+  theme: 'green',
+  musicEnabled: true
+};
 
-function setText(id, value) {
-  const el = document.getElementById(id);
-  if (el && value !== undefined && value !== null) el.textContent = value;
-}
-
-function setHTMLFromText(id, value) {
-  const el = document.getElementById(id);
-  if (!el) return;
-  el.textContent = value || '';
-}
-
-function applyTheme(theme = {}) {
-  const root = document.documentElement;
-  if (theme.bg1) root.style.setProperty('--bg1', theme.bg1);
-  if (theme.bg2) root.style.setProperty('--bg2', theme.bg2);
-  if (theme.accent) root.style.setProperty('--accent', theme.accent);
-  if (theme.accent2) root.style.setProperty('--accent2', theme.accent2);
-  if (theme.text) root.style.setProperty('--text', theme.text);
-  if (theme.muted) root.style.setProperty('--muted', theme.muted);
-}
-
-function renderGallery(items = []) {
-  const gallery = document.getElementById('gallery');
-  gallery.innerHTML = '';
-
-  items.forEach((item, index) => {
-    const fig = document.createElement('figure');
-    fig.className = 'photo-card';
-    fig.style.setProperty('--r', `${[-2, 1.2, -0.8, 1.6, -1.4, 0.8][index % 6]}deg`);
-
-    const img = document.createElement('img');
-    img.src = item.image || '/uploads/placeholder.svg';
-    img.alt = item.caption || 'Anı fotoğrafı';
-    fig.appendChild(img);
-
-    if (item.caption) {
-      const caption = document.createElement('figcaption');
-      caption.textContent = item.caption;
-      fig.appendChild(caption);
-    }
-
-    gallery.appendChild(fig);
-  });
-}
-
-function renderTimeline(items = []) {
-  const section = document.getElementById('timelineSection');
-  const timeline = document.getElementById('timeline');
-  timeline.innerHTML = '';
-
-  if (!items.length) {
-    section.style.display = 'none';
-    return;
+async function loadSite() {
+  try {
+    const res = await fetch('/api/get-site', { cache: 'no-store' });
+    if (!res.ok) throw new Error('API yok');
+    return await res.json();
+  } catch (_) {
+    try {
+      const local = localStorage.getItem('site-preview-data');
+      return local ? JSON.parse(local) : fallback;
+    } catch { return fallback; }
   }
+}
 
-  section.style.display = 'block';
+function setImage(img, src, placeholder) {
+  if (src) {
+    img.src = src;
+    img.style.display = 'block';
+    if (placeholder) placeholder.style.display = 'none';
+  } else {
+    img.removeAttribute('src');
+    img.style.display = 'none';
+    if (placeholder) placeholder.style.display = 'grid';
+  }
+}
 
-  items.forEach(item => {
-    const div = document.createElement('div');
-    div.className = 'timeline-item';
+function applyTheme(theme) {
+  document.body.classList.remove('theme-pink', 'theme-night', 'theme-cream');
+  if (theme && theme !== 'green') document.body.classList.add(`theme-${theme}`);
+}
 
-    const date = document.createElement('div');
-    date.className = 'timeline-date';
-    date.textContent = item.date || '';
-
-    const text = document.createElement('p');
-    text.className = 'timeline-text';
-    text.textContent = item.text || '';
-
-    div.appendChild(date);
-    div.appendChild(text);
-    timeline.appendChild(div);
+function softChime() {
+  const AudioContext = window.AudioContext || window.webkitAudioContext;
+  if (!AudioContext) return;
+  const ctx = new AudioContext();
+  const notes = [523.25, 659.25, 783.99, 1046.5];
+  notes.forEach((freq, i) => {
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.type = 'sine';
+    osc.frequency.value = freq;
+    gain.gain.setValueAtTime(0, ctx.currentTime + i * .16);
+    gain.gain.linearRampToValueAtTime(.16, ctx.currentTime + i * .16 + .03);
+    gain.gain.exponentialRampToValueAtTime(.001, ctx.currentTime + i * .16 + .8);
+    osc.connect(gain).connect(ctx.destination);
+    osc.start(ctx.currentTime + i * .16);
+    osc.stop(ctx.currentTime + i * .16 + .85);
   });
 }
 
-loadSiteData()
-  .then(data => {
-    document.title = data.title || 'Bizim Hikayemiz';
-    setText('eyebrow', data.eyebrow);
-    setText('title', data.title);
-    setText('subtitle', data.subtitle);
-    setText('galleryTitle', data.galleryTitle);
-    setText('letterTitle', data.letterTitle);
-    setText('timelineTitle', data.timelineTitle);
-    setText('footerText', data.footerText);
-
-    const mainImage = document.getElementById('mainImage');
-    if (data.mainImage) mainImage.src = data.mainImage;
-
-    setHTMLFromText('letter', data.letter);
-    renderGallery(data.gallery || []);
-    renderTimeline(data.timeline || []);
-    applyTheme(data.theme || {});
-  })
-  .catch(error => {
-    console.error(error);
-    document.body.insertAdjacentHTML(
-      'beforeend',
-      '<div style="position:fixed;left:12px;right:12px;bottom:12px;background:#111;color:#fff;padding:12px;border-radius:12px;z-index:99">İçerik yüklenemedi. content/site.json dosyasını kontrol et.</div>'
-    );
+loadSite().then(data => {
+  document.title = data.title || fallback.title;
+  document.getElementById('title').textContent = data.title || fallback.title;
+  document.getElementById('subtitle').textContent = data.subtitle || fallback.subtitle;
+  document.getElementById('letterText').textContent = data.letter || fallback.letter;
+  applyTheme(data.theme || 'green');
+  setImage(document.getElementById('mainImage'), data.mainImage, document.getElementById('mainPlaceholder'));
+  (data.gallery || []).slice(0,4).forEach((src, i) => {
+    const img = document.getElementById(`gallery${i}`);
+    const label = img?.nextElementSibling;
+    setImage(img, src, label);
   });
+  const btn = document.getElementById('soundButton');
+  btn.style.display = data.musicEnabled ? 'inline-flex' : 'none';
+  btn.addEventListener('click', () => { softChime(); btn.textContent = 'ses çaldı 💚'; });
+});
